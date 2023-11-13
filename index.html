@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solder Stencil PCB Holder</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+     <style>
+        body {
+            background-color: #333333;
+            color: #efefef;
+        }
+        h1 {
+            color: #0babc8;
+        }
+        a {
+            color: #0babc8;
+        }
+        a:hover, a:focus, a:visited, a:active {
+            color: #21cbea;
+        }
+        .btn-primary {
+            background-color: #0babc8;
+            border-color: #0babc8;
+        }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:visited, .btn-primary:active {
+            background-color: #21cbea;
+            border-color: #21cbea;
+        }
+        .icon-margin-right {
+            margin-right: 10px;
+        }
+        .form-control, .form-select {
+            background-color: #333333;
+            color: #efefef;
+            border-color: #0babc8;
+        }
+        .input-group-text {
+            background-color: #333333;
+            color: #efefef;
+            border-color: #0babc8;
+        }
+        .fa-microchip {
+            font-size: 5em;
+        }
+        .credits {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .description {
+            font-weight: 600;
+        }
+		.form-select:focus {
+			border-color: #0babc8;
+			box-shadow: 0 0 0 .25rem rgba(11, 171, 200, 0.25); /* Adjust the RGBA values to change the shadow color */
+		}
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+
+        <!-- Full-width Column for Title and Description -->
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <i class="fas fa-microchip mb-4"></i>
+                <h1 class="mb-4">Solder Stencil PCB Holder</h1>
+                <p class="description">Stencil holders allow you to line up and apply solder paste to your PCBs perfectly every time.</p>
+				<p>Enter the dimensions of your PCB to download the corresponding STL file.</p>
+            </div>
+        </div>
+
+        <!-- Two-Column Layout -->
+        <div class="row align-items-center">
+            <!-- Left Column for Image -->
+            <div class="col-md-6 mb-4 mb-md-0 text-center">
+                <img src="screenshot.png" class="img-fluid" alt="Descriptive Alt Text">
+            </div>
+
+            <!-- Right Column for Form -->
+            <div class="col-md-6">
+                <form id="stlForm">
+				
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="height"><i class="fas fa-arrows-alt-v icon-margin-right"></i>Height (mm)</label>
+                        <input type="number" class="form-control" id="height" min="0" max="100" value="100">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="width"><i class="fas fa-arrows-alt-h icon-margin-right"></i>Width (mm)</label>
+                        <input type="number" class="form-control" id="width" min="0" max="100" value="100">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="thickness"><i class="fas fa-bars icon-margin-right"></i>Thickness (mm)</label>
+                        <select class="form-select" id="thickness">
+                            <option value="0.8">0.8mm</option>
+                            <option value="1.6" selected>1.6mm</option>
+                            <option value="2.0">2.0mm</option>
+                            <option value="2.4">2.4mm</option>
+                            <option value="3.2">3.2mm</option>
+                        </select>
+                    </div>
+                    <!-- More input groups here -->
+                    <div class="text-center">
+                        <button type="button" class="btn btn-primary btn-download btn-lg" id="downloadBtn">
+                            <i class="fas fa-download"></i> Download STL
+                        </button>
+                    </div>
+					<hr/>
+                    <p class="mt-3">Is your PCB not a rectangle, or is an odd size? <a href="#">Download the STEP file to customize in your CAD package of choice.</a></p>
+                </form>
+            </div>
+        </div>
+		
+		 <!-- Credits Line -->
+        <div class="row">
+            <div class="col-12 credits">
+                <p>Web app and OpenSCAD model by <a href="https://curlytalegames.com/" target="_blank">Curly Tale Games</a>, credit to <a href="https://www.thingiverse.com/mechengineermike/designs" target="_blank">Michael Graham on Thingiverse</a> for designing the original STL.</p>
+				<p><a href="https://github.com/CurlyTaleGamesLLC/SolderStencilPCBHolder">Source files available on GitHub repository<a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 and its dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            var height = document.getElementById('height').value;
+            var width = document.getElementById('width').value;
+            var thickness = document.getElementById('thickness').value;
+    
+            // Construct the filename
+            var filename = 'stencil_' + height + '_' + width + '_' + thickness + '.stl';
+            var filepath = 'OpenSCAD/export/' + filename;
+    
+            // Create a temporary hidden anchor element and set its download attribute
+            var downloadLink = document.createElement('a');
+            downloadLink.href = filepath;
+            downloadLink.download = filename;
+            downloadLink.style.display = 'none';
+    
+            // Append the anchor to the body, click it, and then remove it
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+    </script>
+    
+</body>
+</html>
