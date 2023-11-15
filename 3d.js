@@ -55,7 +55,7 @@ function init() {
 
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'solder-stencil.stl';
+        a.download = 'PCBStencil_Tray.stl';
         a.click();
     });
 
@@ -89,10 +89,6 @@ function loadSTLModel(isLeft = true) {
 
         UpdateFingers();
         UpdateFlaps();
-
-        // You might want to update the camera position and controls to fit the loaded model
-        // controls.target.set(0, 0, 0); // Adjust if necessary
-        // camera.lookAt(controls.target);
     }, onProgress, onError);
 }
 
@@ -108,8 +104,6 @@ function loadFlapSTLModel(isLeft = true) {
         // Create a mesh with the geometry and the material
         const mesh = new THREE.Mesh(geometry, material);
 
-        // mesh.rotation.x = -Math.PI / 2;
-
         if(isLeft){
             flapLeft = mesh;
         }
@@ -121,7 +115,6 @@ function loadFlapSTLModel(isLeft = true) {
         if(isLeft){
             mesh.rotation.z = -Math.PI;
         }
-        // mesh.rotation.z = isLeft ? -67 : -Math.PI;
 
         // Add the mesh to the scene
         scene.add(mesh);
@@ -129,9 +122,6 @@ function loadFlapSTLModel(isLeft = true) {
         UpdateFingers();
         UpdateFlaps();
 
-        // You might want to update the camera position and controls to fit the loaded model
-        // controls.target.set(0, 0, 0); // Adjust if necessary
-        // camera.lookAt(controls.target);
     }, onProgress, onError);
 }
 
@@ -255,7 +245,6 @@ function adjustPlate(width, length, height) {
 
     if(currentY < fingerThreshold){
         fingerScaleY = length / 2;
-        // fingerX += 10;
         fingerY = (length / 2) * 1.5;
     }
 
@@ -271,13 +260,6 @@ function adjustPlate(width, length, height) {
 
     console.log(fingerX);
 
-
-    if(currentY < fingerThreshold){
-        // fingerPositionX -= 10;
-
-        // fingerPositionY = 
-    }
-
     console.log(fingerPositionX);
 
     fingers[0].position.x = -fingerPositionX;
@@ -292,8 +274,6 @@ function adjustPlate(width, length, height) {
 
     UpdateFingers();
     UpdateFlaps();
-    
-    //fingerRight;
 
     base.position.set(0, 0, (-height/2) - 1);
 }
@@ -311,7 +291,6 @@ function UpdateFingers(){
         fingerRight.visible = (currentY >= fingerThreshold);
     }
 
-    // let fingerX = currentX > 97 ? 8 : 10;
     let fingerX = 10;
     let fingerY = 20;
 
@@ -324,7 +303,6 @@ function UpdateFingers(){
         fingerLeft.position.x = -fingerPositionX + 5;
         fingerLeft.position.z = -1;
         fingerLeft.scale.set(1, currentZ + 2, 1);
-        //fingerLeft.scale.set(10, 10, currentZ);
     }
     if(fingerRight){
         fingerRight.position.x = fingerPositionX - 5;
@@ -337,11 +315,7 @@ function UpdateFingers(){
 
 
 function animate() {
-    // Update controls
-    // controls.update();
-
     requestAnimationFrame(animate);
-    // composer.render();
     renderer.render(scene, camera);
 }
 
@@ -372,20 +346,14 @@ function adjustCanvasSize() {
     camera.bottom = sizeConstant / -2;
     camera.updateProjectionMatrix();
 
-    // // Update renderer size
-    // renderer.setSize(size, size);
-
-    // Update renderer and composer sizes
+    // Update renderer size
     renderer.setSize(size, size);
-    // composer.setSize(size, size);
 }
 
 // Call this function when the window is resized
 function onWindowResize() {
     // Adjust the canvas size on window resize
     adjustCanvasSize();
-    // Update controls
-    // controls.update();
 }
 
 window.addEventListener('resize', onWindowResize);
