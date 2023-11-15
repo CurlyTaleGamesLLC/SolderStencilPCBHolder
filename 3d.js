@@ -1,19 +1,25 @@
 // Import Three.js and STLExporter module
 import * as THREE from 'three';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 import { STLExporter } from 'three/addons/exporters/STLExporter.js';
 
 let scene, camera, renderer;
 let cubes = [];
 let fingers = [];
 let base;
+let fingerLeft, fingerRight;
+let flapLeft, flapRight;
 const cubeSize = 1; // Base size of the cubes
+let fingerThreshold = 25;
+
+let currentX, currentY, currentZ;
 
 
 function init() {
     // Create the scene and the camera
     scene = new THREE.Scene();
     camera = new THREE.OrthographicCamera(200, 200, 200, 200, 0.001, 1000);
-    camera.zoom = 3.2;
+    camera.zoom = 2.9;
     camera.updateProjectionMatrix();
 
     // Create the renderer and attach it to the canvas
@@ -32,6 +38,13 @@ function init() {
 
     createCubes();
 
+    // Load the STL file into the scene
+    loadSTLModel(true);
+    loadSTLModel(false);
+
+    loadFlapSTLModel(true);
+    loadFlapSTLModel(false);
+
     camera.position.z = 50;
 
     // Add event listener for STL export
@@ -47,6 +60,107 @@ function init() {
     });
 
     animate();
+}
+
+function loadSTLModel(isLeft = true) {
+    // Create a new STLLoader
+    const loader = new STLLoader();
+
+    // Load your STL file
+    loader.load('finger.stl', function (geometry) {
+        // Create a material
+        const material = new THREE.MeshStandardMaterial({ color: 0x0babc8, flatShading: true });
+
+        // Create a mesh with the geometry and the material
+        const mesh = new THREE.Mesh(geometry, material);
+
+        mesh.rotation.x = -Math.PI / 2;
+
+        if(isLeft){
+            fingerLeft = mesh;
+        }
+        else{
+            fingerRight = mesh;
+            mesh.rotation.z = Math.PI;
+        }
+
+        // Add the mesh to the scene
+        scene.add(mesh);
+
+        UpdateFingers();
+        UpdateFlaps();
+
+        // You might want to update the camera position and controls to fit the loaded model
+        // controls.target.set(0, 0, 0); // Adjust if necessary
+        // camera.lookAt(controls.target);
+    }, onProgress, onError);
+}
+
+function loadFlapSTLModel(isLeft = true) {
+    // Create a new STLLoader
+    const loader = new STLLoader();
+
+    // Load your STL file
+    loader.load('flap.stl', function (geometry) {
+        // Create a material
+        const material = new THREE.MeshStandardMaterial({ color: 0x0babc8, flatShading: true });
+
+        // Create a mesh with the geometry and the material
+        const mesh = new THREE.Mesh(geometry, material);
+
+        // mesh.rotation.x = -Math.PI / 2;
+
+        if(isLeft){
+            flapLeft = mesh;
+        }
+        else{
+            flapRight = mesh;
+        }
+
+        mesh.position.x = isLeft ? -67 : 67;
+        if(isLeft){
+            mesh.rotation.z = -Math.PI;
+        }
+        // mesh.rotation.z = isLeft ? -67 : -Math.PI;
+
+        // Add the mesh to the scene
+        scene.add(mesh);
+
+        UpdateFingers();
+        UpdateFlaps();
+
+        // You might want to update the camera position and controls to fit the loaded model
+        // controls.target.set(0, 0, 0); // Adjust if necessary
+        // camera.lookAt(controls.target);
+    }, onProgress, onError);
+}
+
+function onProgress(xhr) {
+    if (xhr.lengthComputable) {
+        const percentComplete = (xhr.loaded / xhr.total) * 100;
+        console.log('model ' + Math.round(percentComplete, 2) + '% downloaded');
+    }
+}
+
+function onError(error) {
+    console.error('An error happened loading the STL model', error);
+}
+
+function UpdateFlaps(){
+
+    if(currentZ == null){
+        return;
+    }
+
+    if(flapLeft != null){
+        flapLeft.position.z = -1;
+        flapLeft.scale.set(1, 1, currentZ + 2);
+
+    }
+    if(flapRight != null){
+        flapRight.position.z = -1;
+        flapRight.scale.set(1, 1, currentZ + 2);
+    }
 }
 
 function createCubes() {
@@ -83,7 +197,7 @@ function createCubes() {
 
     const baseMaterial = new THREE.MeshStandardMaterial({ color: 0x0a6070 });
     const basePosition = { x: 0, y: 0, z: -0.8 };
-    const baseScale = { x: 150, y: 150, z: 2 };
+    const baseScale = { x: 118, y: 118, z: 2 };
 
     const baseGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
     let baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
@@ -97,10 +211,14 @@ function createCubes() {
 
 function adjustPlate(width, length, height) {
 
-    let maxX = 150;
-    let maxY = 150;
+    currentX = width;
+    currentY = length;
+    currentZ = height;
 
-    let fingerX = 20;
+    let maxX = 118;
+    let maxY = 118;
+
+    let fingerX = width > 97 ? 8 : 10;
     let fingerY = 20;
 
     let halfWidth = width / 2;
@@ -135,6 +253,12 @@ function adjustPlate(width, length, height) {
 
     let fingerScaleY = (cubesY[0] / 2) - (fingerY / 2);
 
+    if(currentY < fingerThreshold){
+        fingerScaleY = length / 2;
+        // fingerX += 10;
+        fingerY = (length / 2) * 1.5;
+    }
+
     fingers[0].scale.set(fingerX, fingerScaleY, height); // Top Left
     fingers[1].scale.set(fingerX, fingerScaleY, height); // Top Right
     fingers[2].scale.set(fingerX, fingerScaleY, height); // Bottom Left
@@ -144,6 +268,17 @@ function adjustPlate(width, length, height) {
 
     let fingerPositionX = (width / 2) + (fingerX / 2);//
     let fingerPositionY = (fingerY / 2) + (fingerScaleY / 2);
+
+    console.log(fingerX);
+
+
+    if(currentY < fingerThreshold){
+        // fingerPositionX -= 10;
+
+        // fingerPositionY = 
+    }
+
+    console.log(fingerPositionX);
 
     fingers[0].position.x = -fingerPositionX;
     fingers[1].position.x = fingerPositionX;
@@ -155,7 +290,49 @@ function adjustPlate(width, length, height) {
     fingers[2].position.y = -fingerPositionY;
     fingers[3].position.y = -fingerPositionY;
 
+    UpdateFingers();
+    UpdateFlaps();
+    
+    //fingerRight;
+
     base.position.set(0, 0, (-height/2) - 1);
+}
+
+function UpdateFingers(){
+
+    if(currentX == null){
+        return;
+    }
+
+    if(fingerLeft != null){
+        fingerLeft.visible = (currentY >= fingerThreshold);
+    }
+    if(fingerRight != null){
+        fingerRight.visible = (currentY >= fingerThreshold);
+    }
+
+    // let fingerX = currentX > 97 ? 8 : 10;
+    let fingerX = 10;
+    let fingerY = 20;
+
+    let fingerScaleY = (currentY / 2) - (fingerY / 2);
+
+    let fingerPositionX = (currentX / 2) + (fingerX / 2);//
+    let fingerPositionY = (fingerY / 2) + (fingerScaleY / 2);
+
+    if(fingerLeft){
+        fingerLeft.position.x = -fingerPositionX + 5;
+        fingerLeft.position.z = -1;
+        fingerLeft.scale.set(1, currentZ + 2, 1);
+        //fingerLeft.scale.set(10, 10, currentZ);
+    }
+    if(fingerRight){
+        fingerRight.position.x = fingerPositionX - 5;
+        fingerRight.position.z = -1;
+        fingerRight.scale.set(1, currentZ + 2, 1);
+
+        console.log(fingerRight.position, fingerRight.scale, currentZ);
+    }
 }
 
 
@@ -217,19 +394,24 @@ init();
 
 function handleInputChange() {
     // Get the values from the inputs
-    const width = document.getElementById('width').value;
-    const height = document.getElementById('height').value;
-    const thickness = document.getElementById('thickness').value;
+    const width = parseFloat(document.getElementById('width').value);
+    const height = parseFloat(document.getElementById('height').value);
+    const thickness = parseFloat(document.getElementById('thickness').value);
+
+    const tolerance = parseFloat(document.getElementById('tolerance').value);
+
+    console.log(width, height, thickness, tolerance);
 
     // Log the values to the console
-    console.log('Width:', width, 'Height:', height, 'Thickness:', thickness);
-    adjustPlate(width, height, thickness);
+    console.log('Width:', width + tolerance, 'Height:', height + tolerance, 'Thickness:', thickness);
+    adjustPlate(width + tolerance, height + tolerance, thickness);
 }
 
 // Add change event listeners to the form inputs
 document.getElementById('width').addEventListener('change', handleInputChange);
 document.getElementById('height').addEventListener('change', handleInputChange);
 document.getElementById('thickness').addEventListener('change', handleInputChange);
+document.getElementById('tolerance').addEventListener('change', handleInputChange);
 
 // Call the function once to log the initial values on page load
 handleInputChange();

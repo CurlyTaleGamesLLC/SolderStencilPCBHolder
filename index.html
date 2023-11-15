@@ -115,6 +115,21 @@
                             <option value="3.2">3.2mm</option>
                         </select>
                     </div>
+
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="tolerance"><i class="fas fa-crosshairs icon-margin-right"></i>Printer Tolerance (mm)</label>
+                        <select class="form-select" id="tolerance">
+                            <option value="-0.8">-0.8mm</option>
+                            <option value="-0.6">-0.6mm</option>
+                            <option value="-0.4">-0.4mm</option>
+                            <option value="-0.2">-0.2mm</option>
+                            <option value="0">0mm</option>
+                            <option value="0.2">0.2mm</option>
+                            <option value="0.4" selected>0.4mm</option>
+                            <option value="0.6">0.6mm</option>
+                            <option value="0.8">0.8mm</option>
+                        </select>
+                    </div>
                     <!-- More input groups here -->
                     <div class="text-center">
                         <button type="button" class="btn btn-primary btn-download btn-lg" id="export-stl">
@@ -143,10 +158,7 @@
         {
           "imports": {
             "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/",
-            "three/addons/postprocessing/EffectComposer.js": "https://unpkg.com/three@0.158.0/examples/jsm/postprocessing/EffectComposer.js",
-            "three/addons/postprocessing/RenderPass.js": "https://unpkg.com/three@0.158.0/examples/jsm/postprocessing/RenderPass.js",
-            "three/addons/postprocessing/SSAOPass.js": "https://unpkg.com/three@0.158.0/examples/jsm/postprocessing/SSAOPass.js"
+            "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
           }
         }
     </script>
