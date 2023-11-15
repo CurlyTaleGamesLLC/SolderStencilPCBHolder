@@ -5,43 +5,8 @@ Solder Stencil PCB Holder is a web application designed for generating downloada
 ![Screenshot](screenshot.png)
 
 <p align="center">
-  <a href="https://curlytalegamesllc.github.io/SolderStencilPCBHolder/"><img height="70px" src="./docs/try.png"></a>
+  <a href="https://curlytalegamesllc.github.io/SolderStencilPCBHolder/"><img height="70px" src="./img/try.png"></a>
 </p>
-
-## Getting Started
-
-
-Solder Stencil PCB Holder is hosted on GitHub Pages, you don't have to run it locally. But if you'd like to make some changes below are the instructions to get started.
-
-Before making changes to Solder Stencil PCB Holder, ensure you have [OpenSCAD](https://openscad.org/downloads.html) installed.
-
-
-Make sure to add the path to OpenSCAD.exe to your environement variables:
-
-    C:\Program Files\OpenSCAD
-
-### Editing and Exporting STLs
-
-You can open the `SolderStencilPCBHolder.scad` file in the OpenSCAD directory of this project to edit the parameters or source code of this project.
-
-#### Bulk Export
-
-The web app has a form that generates a link to a STL file that was created using this bulk export process.
-
-To do a bulk export you need to install [Python](https://www.python.org/downloads/) to export and compress the STL files
-
-Make sure add the Python path to your environement variables during installation
-
-After installing Python install the `numpy-stl` library using this command:
-
-    pip install numpy-stl
-
-
-Lastly run the `bulk-export.py` file
-
-    python bulk-export.py
-
-It will use the OpenSCAD command line interface to export out every possible combination of widths, heights, and thicknesses of rectangular PCBs. The STL files will be saved and compressed in the export directory and named in this format `stencil_[height]_[width]_[thickness].stl`
 
 
 ## Contributing
